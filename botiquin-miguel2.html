@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Botiquín de Yeli 🩹</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
+
+:root {
+  --bg: #fdf6f0;
+  --bg2: #f5ede4;
+  --white: #ffffff;
+  --border: #eaddd4;
+  --pink: #e8829a;
+  --pink-light: #f5b8c6;
+  --pink-pale: #fef0f3;
+  --peach: #f0a07a;
+  --peach-pale: #fef4ee;
+  --mint: #7ac4a8;
+  --mint-pale: #eef8f4;
+  --lavender: #a890d8;
+  --lavender-pale: #f3effc;
+  --blue: #7ab0d8;
+  --blue-pale: #eef5fc;
+  --yellow: #e8c46a;
+  --yellow-pale: #fdf8ec;
+  --red: #e87a7a;
+  --red-pale: #fef0f0;
+  --text: #3a2e2e;
+  --muted: #a08878;
+  --shadow: rgba(180,130,110,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Quicksand', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* grain texture */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:1000;
+}
+
+/* ---- INTRO ---- */
+#intro {
+  position:fixed; inset:0;
+  background: linear-gradient(135deg, #fdf6f0 0%, #fdeef4 50%, #f0f4fd 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:500; text-align:center; padding:32px;
+  transition: opacity 0.7s, transform 0.7s;
+}
+#intro.out { opacity:0; transform:scale(1.05); pointer-events:none; }
+
+.intro-bag {
+  font-size:5rem; margin-bottom:16px;
+  animation: wiggle 2s ease-in-out infinite;
+}
+@keyframes wiggle {
+  0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)}
+}
+#intro h1 {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,6vw,2.4rem);
+  color: var(--pink);
+  margin-bottom:8px;
+}
+#intro p {
+  color:var(--muted); font-size:0.9rem; font-weight:400;
+  line-height:1.7; margin-bottom:28px; max-width:260px;
+}
+.open-btn {
+  padding:13px 36px;
+  background: linear-gradient(135deg, var(--pink), var(--peach));
+  color:white; border:none; border-radius:50px;
+  font-family:'Quicksand',sans-serif; font-size:1rem; font-weight:700;
+  cursor:pointer; box-shadow:0 6px 24px rgba(232,130,154,0.35);
+  transition:all 0.2s;
+}
+.open-btn:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(232,130,154,0.45); }
+
+/* ---- MAIN ---- */
+#main {
+  display:none; opacity:0;
+  padding:28px 16px 60px;
+  max-width:500px; margin:0 auto;
+  transition: opacity 0.5s;
+}
+#main.show { opacity:1; }
+
+.main-header {
+  text-align:center; margin-bottom:28px;
+}
+.main-header h1 {
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem; color:var(--pink); margin-bottom:4px;
+}
+.main-header p { font-size:0.82rem; color:var(--muted); font-weight:400; }
+
+/* ---- SHELF / GRID ---- */
+.shelf {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:14px;
+}
+
+/* ---- REMEDY ITEM ---- */
+.remedy {
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:20px;
+  padding:18px 16px;
+  cursor:pointer;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 3px 12px var(--shadow);
+}
+.remedy:hover {
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 10px 28px var(--shadow);
+}
+.remedy.opened {
+  border-color: var(--item-color);
+  box-shadow: 0 6px 24px var(--shadow), 0 0 0 3px color-mix(in srgb, var(--item-color) 20%, transparent);
+}
+
+/* color stripe top */
+.remedy::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0;
+  height:4px;
+  background: var(--item-color, var(--pink));
+  border-radius:20px 20px 0 0;
+}
+
+.remedy-icon {
+  font-size:2.2rem;
+  margin-bottom:8px;
+  display:block;
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+.remedy:hover .remedy-icon, .remedy.opened .remedy-icon {
+  transform:scale(1.15) rotate(5deg);
+}
+
+.remedy-label {
+  font-size:0.72rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color: var(--item-color, var(--pink));
+  margin-bottom:4px;
+}
+.remedy-name {
+  font-family:'Playfair Display',serif;
+  font-size:0.98rem;
+  color:var(--text);
+  line-height:1.3;
+}
+
+/* tag/pill badge */
+.remedy-badge {
+  display:inline-block;
+  margin-top:7px;
+  padding:3px 10px;
+  border-radius:50px;
+  font-size:0.68rem;
+  font-weight:600;
+  background: color-mix(in srgb, var(--item-color) 12%, white);
+  color: var(--item-color, var(--pink));
+  border:1px solid color-mix(in srgb, var(--item-color) 25%, transparent);
+}
+
+/* ---- MODAL ---- */
+#modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(60,30,30,0.35);
+  backdrop-filter:blur(6px);
+  z-index:300;
+  align-items:flex-end; justify-content:center;
+  padding:0 12px 20px;
+}
+#modal-overlay.show { display:flex; }
+
+.modal {
+  background:var(--white);
+  border-radius:28px 28px 20px 20px;
+  width:100%; max-width:460px;
+  padding:28px 24px 32px;
+  position:relative;
+  animation:slideUp 0.4s cubic-bezier(.34,1.3,.64,1);
+  border-top:5px solid var(--modal-color, var(--pink));
+  box-shadow:0 -4px 40px rgba(0,0,0,0.12);
+  max-height:85vh;
+  overflow-y:auto;
+}
+@keyframes slideUp {
+  from{transform:translateY(100px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+.modal-close {
+  position:absolute; top:16px; right:18px;
+  background:var(--bg2); border:none; border-radius:50%;
+  width:32px; height:32px; font-size:1.1rem;
+  cursor:pointer; color:var(--muted);
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+}
+.modal-close:hover { background:var(--border); }
+
+.modal-icon { font-size:3rem; text-align:center; margin-bottom:10px; }
+.modal-tag {
+  text-align:center; margin-bottom:4px;
+  font-size:0.7rem; font-weight:700; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--modal-color,var(--pink));
+}
+.modal-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.3rem; color:var(--text);
+  text-align:center; margin-bottom:18px;
+}
+.modal-body {
+  font-size:0.93rem; color:#5a4848;
+  line-height:1.85; font-weight:400;
+}
+.modal-body p { margin-bottom:10px; }
+.modal-body p:last-child { margin-bottom:0; }
+.modal-body em { color:var(--modal-color,var(--pink)); font-style:normal; font-weight:600; }
+.modal-body blockquote {
+  background:color-mix(in srgb, var(--modal-color,var(--pink)) 8%, white);
+  border-left:3px solid var(--modal-color,var(--pink));
+  border-radius:0 10px 10px 0;
+  padding:12px 14px;
+  margin:12px 0;
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-size:1rem;
+  color:var(--text);
+  line-height:1.6;
+}
+
+/* breath widget inside modal */
+.breath-widget {
+  text-align:center; margin:14px 0 4px;
+}
+.breath-ring {
+  width:70px; height:70px; border-radius:50%;
+  border:3px solid var(--mint);
+  background:var(--mint-pale);
+  margin:0 auto 10px;
+  transition:transform 0.1s linear, background 0.1s;
+}
+.breath-phase {
+  font-family:'Playfair Display',serif;
+  font-style:italic; font-size:1rem;
+  color:var(--mint); margin-bottom:6px; min-height:24px;
+}
+.breath-track {
+  width:120px; height:3px; background:var(--border);
+  border-radius:3px; margin:0 auto 10px; overflow:hidden;
+}
+.breath-fill { height:100%; background:var(--mint); width:0%; transition:width 0.1s linear; border-radius:3px; }
+.breath-start, .breath-stop {
+  padding:7px 20px; border-radius:50px; border:none;
+  font-family:'Quicksand',sans-serif; font-size:0.82rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.breath-start { background:var(--mint); color:white; box-shadow:0 4px 14px rgba(122,196,168,0.3); }
+.breath-start:hover { background:#5fb896; }
+.breath-stop { background:var(--bg2); color:var(--muted); margin-left:6px; }
+
+/* jar inside modal */
+.jar-inside { margin-top:12px; }
+.jar-row { display:flex; gap:8px; margin-bottom:8px; }
+.jar-input {
+  flex:1; padding:9px 14px; border:1.5px solid var(--border);
+  border-radius:50px; font-family:'Quicksand',sans-serif;
+  font-size:0.85rem; background:var(--bg); color:var(--text); outline:none;
+}
+.jar-input:focus { border-color:var(--pink-light); }
+.jar-save {
+  padding:9px 16px; background:var(--pink); color:white;
+  border:none; border-radius:50px; font-family:'Quicksand',sans-serif;
+  font-size:0.82rem; font-weight:700; cursor:pointer; transition:background 0.2s;
+  white-space:nowrap;
+}
+.jar-save:hover { background:#d0607a; }
+.jar-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.jar-tag {
+  background:var(--pink-pale); border:1px solid var(--pink-light);
+  color:var(--pink); padding:4px 12px; border-radius:50px;
+  font-size:0.78rem; font-weight:600; animation:popIn 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+
+/* affirmation */
+.aff-box {
+  background:var(--lavender-pale);
+  border:1px solid color-mix(in srgb, var(--lavender) 30%, white);
+  border-radius:14px; padding:16px; margin-top:10px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:1rem; color:var(--text); text-align:center; line-height:1.7;
+  display:none; animation:fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.aff-btn {
+  display:block; width:100%; margin-top:10px;
+  padding:9px; background:var(--lavender); color:white;
+  border:none; border-radius:50px; font-family:'Quicksand',sans-serif;
+  font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.aff-btn:hover { background:#9070c8; }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-bag">🩹</div>
+  <h1>Botiquín<br>de Cariño</h1>
+  <p>Hecho con mucho amor para ti, Piuchi.<br>Abre lo que necesites cuando lo necesites.</p>
+  <button class="open-btn" onclick="openMain()">Abrir mi botiquín 💊</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="main-header">
+    <h1>Tu botiquín 🩹</h1>
+    <p>Toca lo que necesitas hoy</p>
+  </div>
+
+  <div class="shelf" id="shelf"></div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-icon" id="m-icon"></div>
+    <div class="modal-tag" id="m-tag"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<script>
+const remedies = [
+  {
+    icon: '😢',
+    label: 'Para cuando',
+    name: 'Te sientes triste',
+    badge: 'Abrir aquí',
+    color: '#7ab0d8',
+    tag: 'Remedio #1 · Tristeza',
+    content: `
+      <p>Está bien estar triste. No tienes que apurarte a sentirte mejor.</p>
+      <p>Llora si necesitas, que llorar no es ser débil. Es dejar salir lo que pesa.</p>
+      <blockquote>A veces está bien no estar bien. No necesitas darlo todo, necesitas estar bien tú.</blockquote>
+      <p>Cuando puedas, toma agua, abrígate y pon una canción que te guste. Solo eso por ahora.</p>
+    `
+  },
+  {
+    icon: '💊',
+    label: 'Para cuando',
+    name: 'Fue un mal día',
+    badge: '1 dosis',
+    color: '#e8829a',
+    tag: 'Remedio #2 · Días difíciles',
+    content: `
+      <p>¿Te fue mal? Tranquilo, solo fue un día malo. No pasa nada, todo estará bien ¿sí?</p>
+      <p>¿Tienes problemas en casa? No te preocupes, todo saldrá bien. Tú eres fuerte. Ánimo mi Piuchi, no te rindas, tú puedes. 💪</p>
+      <blockquote>Ya sabes a mi no me nadie 🤭 y tú eres igual de fuerte. No te rindas. Te quiero muchísimo. ❤️</blockquote>
+      <p>Yo estoy aquí para echarte porras siempre. ¿Sí? 🩷</p>
+      <p style="text-align:right;font-style:italic;color:#e8829a;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '🫁',
+    label: 'Para cuando',
+    name: 'La ansiedad aprieta',
+    badge: 'Respirar',
+    color: '#7ac4a8',
+    tag: 'Remedio #3 · Ansiedad',
+    isBreath: true,
+    content: `
+      <p>Cuando el pecho aprieta y la mente va muy rápido, para todo y respira.</p>
+      <p>Este ejercicio le dice a tu cuerpo que está a salvo:</p>
+      <div class="breath-widget">
+        <div class="breath-ring" id="b-ring"></div>
+        <div class="breath-phase" id="b-phase">Presiona para empezar</div>
+        <div class="breath-track"><div class="breath-fill" id="b-fill"></div></div>
+        <button class="breath-start" onclick="startBreath()">Respirar ahora</button>
+        <button class="breath-stop" onclick="stopBreath()">Detener</button>
+      </div>
+    `
+  },
+  {
+    icon: '🫙',
+    label: 'Para cuando',
+    name: 'Olvidaste lo bonito',
+    badge: 'Guardar',
+    color: '#f0a07a',
+    tag: 'Remedio #4 · Gratitud',
+    isJar: true,
+    content: `
+      <p>Crees q no tienes nada bonito es un chiste? Te recuerdo como solíamos jugar en tik tok como sabemos reír juntos o cuando se pelear con marus y ambos sabemos estar haciendole enojar más 🤣</p>
+      <blockquote>mi piuchi tu tienes muchas cosas buenas recuerdas los poemas las frases las dedicatorias q solías escribir cuando nos conocimos todo eso te hace especial y diferente tienes la manera de amar a la antigua esos amores q ya no ahí tu eres especial y único ❤️</blockquote>
+      <p>si quieres q te recuerde más cosas buenas me avisas q aún se más cosas bonitas por recordar jajaja</p>
+      <p style="text-align:right;font-style:italic;color:#f0a07a;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '🤍',
+    label: 'Para cuando',
+    name: 'Crees que no vales',
+    badge: 'Leer',
+    color: '#a890d8',
+    tag: 'Remedio #5 · Autoestima',
+    content: `
+      <p>Crees q no vales nada? Es encerio tu vales mucho vales oro mi piuchi eres único y especial tu vales oro como lo dije antes se que pasaron muchas cosas q dolieron pero eso no te hace menos.</p>
+      <blockquote>tu eres un hombre maravilloso como dije tienes una manera de amar muy bonita además q sabes matemáticas física quimica 🤭 cosas q yo no sé jajaja además q eres medio hacker creo jajaja 🤣</blockquote>
+      <p>vio vio usted es único mi niño no tenga bajones Shi lo queyo mucho 🩷</p>
+      <p style="text-align:right;font-style:italic;color:#a890d8;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '✨',
+    label: 'Para cuando',
+    name: 'Necesitas una afirmación',
+    badge: 'Tocar',
+    color: '#a890d8',
+    tag: 'Remedio #6 · Afirmaciones',
+    isAff: true,
+    content: `
+      <p>A veces solo necesitas que alguien te recuerde algo bueno de ti. Aquí estoy yo.</p>
+      <blockquote>Tú eres especial como eres. No tienes que cambiar nada. Tú así como eres me encantas. ❤️</blockquote>
+      <p>El chico cariñoso y amoroso aún está, solo que te volviste frío para no sentir dolor. Ya vendrá alguien que saque ese lado hermoso de ti.</p>
+      <p>Tú puedes. Ánimo. Yo creo en ti, mi niño hermoso. ❤️ No te rindas nunca.</p>
+      <p style="text-align:right;font-style:italic;color:#a890d8;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '🌿',
+    label: 'Para cuando',
+    name: 'Tu mente se va lejos',
+    badge: '5-4-3-2-1',
+    color: '#7ac4a8',
+    tag: 'Remedio #7 · Anclaje',
+    content: `
+      <p>Cuando los pensamientos te arrastran a otro lado, vuelve al presente con esto:</p>
+      <p>🔵 <em>5 cosas</em> que puedes ver<br>
+         🟢 <em>4 cosas</em> que puedes tocar<br>
+         🟡 <em>3 cosas</em> que puedes escuchar<br>
+         🟠 <em>2 cosas</em> que puedes oler<br>
+         🔴 <em>1 cosa</em> que puedes saborear</p>
+      <p>Tu mente no puede estar en dos lugares a la vez. Tráela aquí.</p>
+    `
+  },
+  {
+    icon: '🙃',
+    label: 'Para cuando',
+    name: 'Finges que estás bien',
+    badge: 'Solo tú',
+    color: '#f0a07a',
+    tag: 'Remedio #8 · Honestidad',
+    content: `
+      <p>Fingir estár bien ❤️‍🩹 y no estarlo no tiene nada de malo pero aveces sentirse mal está bien no por ser hombre tienes q cargar con todo tienes derecho a sentirte mal tienes derecho a llorar tienes derecho a sentir.</p>
+      <blockquote>y si quieres hablar con alguien o si quieres reír puedes contar con Migo no soy buena en algunas cosas y lo sé pero me importas mucho no me gusta verte mal y cargando todo y aguantando todo solo por ver bien a los demás</blockquote>
+      <p>tu también eres importante sobre todo para mí lo eres ❤️‍🩹</p>
+      <p style="text-align:right;font-style:italic;color:#f0a07a;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '💌',
+    label: 'Para cuando',
+    name: 'Me necesitas a mí',
+    badge: 'De Yeli',
+    color: '#e8829a',
+    tag: 'Remedio #9 · De Yeli',
+    content: `
+      <p>A veces no tienes que fingir estar bien. A veces está bien no estar bien.</p>
+      <p>No quiero que llores. Si crees que nadie te quiere, yo aquí te amo mucho.</p>
+      <p>Lo estás haciendo bien, poquito a poquito ¿sí?</p>
+      <blockquote>Sabías que tú eres lo más bonito que un día me pasó. 🩷</blockquote>
+      <p style="text-align:right;font-style:italic;color:#e8829a;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+  {
+    icon: '⭐',
+    label: 'Para cuando',
+    name: 'No puedes dormir',
+    badge: 'Noche',
+    color: '#7ab0d8',
+    tag: 'Remedio #10 · Noche',
+    content: `
+      <p>Si no puedes dormir no te preocupes. Si yo aún sigo despierta podemos hablar, o si quieres solo jugar ajedrez ♟️ y me ganas como siempre jajaja.</p>
+      <p>O podemos hacer algo. No estás solo.</p>
+      <blockquote>Si tengo que quedarme a tu lado toda la noche lo hago. Yo quiero que estés bien. ❤️‍🩹</blockquote>
+      <p style="text-align:right;font-style:italic;color:#7ab0d8;font-size:0.88rem;">— Tu Yeli</p>
+    `
+  },
+];
+
+// ---- Build shelf ----
+function buildShelf() {
+  const shelf = document.getElementById('shelf');
+  remedies.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'remedy';
+    div.style.setProperty('--item-color', r.color);
+    div.style.animationDelay = (i*0.06)+'s';
+    div.innerHTML = `
+      <span class="remedy-icon">${r.icon}</span>
+      <div class="remedy-label">${r.label}</div>
+      <div class="remedy-name">${r.name}</div>
+      <span class="remedy-badge">${r.badge}</span>
+    `;
+    div.onclick = () => openRemedy(i, div);
+    shelf.appendChild(div);
+  });
+}
+
+function openRemedy(i, el) {
+  const r = remedies[i];
+  document.querySelectorAll('.remedy').forEach(x=>x.classList.remove('opened'));
+  el.classList.add('opened');
+  document.getElementById('m-icon').textContent = r.icon;
+  document.getElementById('m-tag').textContent = r.tag;
+  document.getElementById('m-tag').style.color = r.color;
+  document.getElementById('m-title').textContent = r.name;
+  document.getElementById('m-body').innerHTML = r.content;
+  document.getElementById('modal').style.setProperty('--modal-color', r.color);
+  document.getElementById('modal').style.borderTopColor = r.color;
+  // reset breath if any
+  stopBreath();
+  // hide aff box
+  const aff = document.getElementById('aff-box');
+  if(aff) aff.style.display='none';
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if(e.target===document.getElementById('modal-overlay')) closeModalBtn();
+}
+function closeModalBtn() {
+  stopBreath();
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+// ---- BREATHING ----
+let bTimer = null;
+const bPhases = [
+  {text:'Inhala...', dur:4, scale:1.5},
+  {text:'Aguanta...', dur:4, scale:1.5},
+  {text:'Exhala...', dur:6, scale:1.0},
+];
+function startBreath() {
+  stopBreath();
+  runPhase(0, 0);
+}
+function runPhase(pi, tick) {
+  const ring = document.getElementById('b-ring');
+  const phase = document.getElementById('b-phase');
+  const fill = document.getElementById('b-fill');
+  if(!ring) return;
+  const p = bPhases[pi%3];
+  const total = p.dur*10;
+  if(tick===0) phase.textContent = p.text;
+  const prog = tick/total;
+  fill.style.width = (prog*100)+'%';
+  const prevScale = pi%3===0?1.0:bPhases[(pi-1)%3].scale;
+  const s = prevScale + (p.scale-prevScale)*prog;
+  ring.style.transform = `scale(${s})`;
+  if(tick<total) bTimer=setTimeout(()=>runPhase(pi,tick+1),100);
+  else bTimer=setTimeout(()=>runPhase(pi+1,0),100);
+}
+function stopBreath() {
+  clearTimeout(bTimer);
+  const ring=document.getElementById('b-ring');
+  const fill=document.getElementById('b-fill');
+  const phase=document.getElementById('b-phase');
+  if(ring){ring.style.transform='scale(1)';}
+  if(fill){fill.style.width='0%';}
+  if(phase){phase.textContent='Presiona para empezar';}
+}
+
+// ---- JAR ----
+const jarItems = [];
+function addJar() {
+  const inp = document.getElementById('jar-inp');
+  const val = inp?.value.trim();
+  if(!val) return;
+  jarItems.push(val);
+  inp.value = '';
+  const tags = document.getElementById('jar-tags');
+  const tag = document.createElement('div');
+  tag.className = 'jar-tag';
+  tag.textContent = '✦ ' + val;
+  tags.appendChild(tag);
+}
+
+// ---- AFFIRMATIONS ----
+const affs = [
+  "Eres suficiente. Exactamente como eres, hoy.",
+  "Tus sentimientos son válidos. No tienes que justificarlos.",
+  "Estás haciendo lo mejor que puedes con lo que tienes.",
+  "Este momento difícil va a pasar. Ya pasaste por cosas difíciles antes.",
+  "No tienes que ser perfecto para merecer amor y descanso.",
+  "Tu mente te miente cuando estás cansado. Eres más fuerte de lo que crees.",
+  "Está bien pedir ayuda. Está bien necesitar a alguien.",
+  "Cada pequeño paso cuenta. Incluso seguir aquí es un logro.",
+  "Mereces paz. Mereces cuidado. Mereces estar bien.",
+  "No estás solo en esto, aunque a veces se sienta así.",
+];
+let lastAff = -1;
+function showAff() {
+  let i; do { i=Math.floor(Math.random()*affs.length); } while(i===lastAff);
+  lastAff=i;
+  const box=document.getElementById('aff-box');
+  box.style.display='none';
+  box.textContent='"'+affs[i]+'"';
+  box.style.display='block';
+  box.style.animation='none';
+  void box.offsetWidth;
+  box.style.animation='fadeIn 0.4s ease';
+}
+
+// ---- INTRO ----
+function openMain() {
+  document.getElementById('intro').classList.add('out');
+  setTimeout(()=>{
+    document.getElementById('intro').style.display='none';
+    const m=document.getElementById('main');
+    m.style.display='block';
+    setTimeout(()=>m.classList.add('show'),50);
+    buildShelf();
+  },700);
+}
+</script>
+</body>
+</html>
