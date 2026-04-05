@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +16,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.botiquin.carinio.model.Remedy
 import com.botiquin.carinio.ui.RemedyAdapter
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
+import android.view.Window
+import android.view.WindowManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlin.random.Random
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         val recycler = findViewById<RecyclerView>(R.id.remediesRecycler)
         recycler.layoutManager = GridLayoutManager(this, 2)
-        recycler.adapter = RemedyAdapter(buildRemedies(), ::showRemedySheet)
+        recycler.adapter = RemedyAdapter(buildRemedies(), ::showRemedyDialog)
     }
 
     private fun buildRemedies(): List<Remedy> = listOf(
@@ -82,11 +84,12 @@ class MainActivity : AppCompatActivity() {
             Color.parseColor("#7AB0D8"), false, false, false)
     )
 
-    private fun showRemedySheet(remedy: Remedy) {
+    private fun showRemedyDialog(remedy: Remedy) {
         stopBreathing()
 
-        val dialog = BottomSheetDialog(this)
-        val sheet = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_remedy, null, false)
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        val sheet = LayoutInflater.from(this).inflate(R.layout.dialog_remedy_floating, null, false)
 
         sheet.findViewById<TextView>(R.id.sheetIcon).text = remedy.icon
         sheet.findViewById<TextView>(R.id.sheetSubtitle).apply {
@@ -108,8 +111,17 @@ class MainActivity : AppCompatActivity() {
         if (remedy.hasAffirmations) configureAffirmations(sheet)
         if (remedy.hasGratitudeJar) configureGratitude(sheet)
 
+        sheet.findViewById<View>(R.id.dialogOverlay)?.setOnClickListener { dialog.dismiss() }
+        sheet.findViewById<View>(R.id.dialogCard)?.setOnClickListener { /* consume */ }
+        sheet.findViewById<View>(R.id.closeButton)?.setOnClickListener { dialog.dismiss() }
+
         dialog.setOnDismissListener { stopBreathing() }
         dialog.setContentView(sheet)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.MATCH_PARENT
+        )
         dialog.show()
     }
 

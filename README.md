@@ -5,7 +5,7 @@ Esta versión no usa HTML/WebView: está portada a Android nativo con Kotlin + M
 ## Qué incluye
 
 - Pantalla principal con tarjetas en grilla.
-- Modal tipo Bottom Sheet con detalle del remedio.
+- Tarjeta flotante centrada (modal tipo card) con detalle del remedio.
 - Herramientas nativas integradas:
   - respiración guiada,
   - afirmaciones aleatorias,
