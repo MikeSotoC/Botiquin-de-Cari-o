@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rose_primary">#D8668A</color>
+    <color name="rose_dark">#B84A6F</color>
+    <color name="cream_bg">#FFF8F3</color>
+    <color name="sand_bg">#FCEFE7</color>
+    <color name="ink">#3A2F2F</color>
+    <color name="muted">#8A7A70</color>
+    <color name="white">#FFFFFF</color>
+</resources>

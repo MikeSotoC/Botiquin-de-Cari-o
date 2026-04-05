@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="#FFFDFB">
+
+        <View
+            android:layout_width="42dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#1A8B6D7D" />
+
+        <TextView
+            android:id="@+id/sheetIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/icon_bubble"
+            android:gravity="center"
+            android:textSize="34sp"
+            android:text="🩹" />
+
+        <TextView
+            android:id="@+id/sheetSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Para cuando"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textSize="11sp"
+            android:letterSpacing="0.07"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/sheetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Título"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:textColor="@color/ink"
+            android:fontFamily="serif"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:id="@+id/sheetDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:textColor="#594747"
+            android:textSize="16sp"
+            android:lineSpacingExtra="5dp"
+            android:text="Detalle" />
+
+        <LinearLayout
+            android:id="@+id/breathSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="18dp"
+            android:padding="14dp"
+            android:background="@drawable/soft_panel"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Respiración guiada"
+                android:textColor="#2E7D5D"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/breathPhase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Presiona empezar"
+                android:layout_marginTop="4dp"
+                android:textColor="#5D746B" />
+
+            <ProgressBar
+                android:id="@+id/breathProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:max="100" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/startBreathButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Empezar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#63B896" />
+
+                <Button
+                    android:id="@+id/stopBreathButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Detener"
+                    android:textColor="#5A6068"
+                    android:backgroundTint="#ECE8EF" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/affirmationSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="14dp"
+            android:padding="14dp"
+            android:background="@drawable/soft_panel"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/nextAffirmationButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nueva afirmación"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#9A7EDB" />
+
+            <TextView
+                android:id="@+id/affirmationText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textStyle="italic"
+                android:textColor="#4A4062"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/gratitudeSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="14dp"
+            android:padding="14dp"
+            android:background="@drawable/soft_panel"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Frasco de gratitud"
+                android:textStyle="bold"
+                android:textColor="#8E6A52" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/gratitudeInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Escribe algo bonito de hoy"
+                    android:background="#FFF6F0"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp" />
+
+                <Button
+                    android:id="@+id/addGratitudeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Agregar"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#E5926F"
+                    android:layout_marginStart="8dp" />
+
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/gratitudeChips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
