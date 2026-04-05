@@ -1,7 +1,7 @@
 package com.botiquin.carinio.ui
 
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,12 +32,9 @@ class RemedyAdapter(
         holder.card.strokeColor = remedy.color
         holder.topStripe.setBackgroundColor(remedy.color)
         holder.card.setCardBackgroundColor(ColorUtils.blendARGB(Color.WHITE, remedy.color, 0.04f))
-
-        val badgeDrawable = holder.badge.background
-        if (badgeDrawable is GradientDrawable) {
-            badgeDrawable.mutate()
-            badgeDrawable.setColor(ColorUtils.blendARGB(Color.WHITE, remedy.color, 0.15f))
-        }
+        holder.badge.backgroundTintList = ColorStateList.valueOf(
+            ColorUtils.blendARGB(Color.WHITE, remedy.color, 0.15f)
+        )
 
         holder.itemView.setOnClickListener { onRemedyClick(remedy) }
     }

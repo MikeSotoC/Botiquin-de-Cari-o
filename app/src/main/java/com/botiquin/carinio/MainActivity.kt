@@ -96,17 +96,17 @@ class MainActivity : AppCompatActivity() {
         sheet.findViewById<TextView>(R.id.sheetTitle).text = remedy.title
         sheet.findViewById<TextView>(R.id.sheetDetail).text = remedy.detail
 
-        val breathSection = sheet.findViewById<LinearLayout>(R.id.breathSection)
-        val affirmationSection = sheet.findViewById<LinearLayout>(R.id.affirmationSection)
-        val gratitudeSection = sheet.findViewById<LinearLayout>(R.id.gratitudeSection)
+        val breathSection = sheet.findViewById<View>(R.id.breathSection)
+        val affirmationSection = sheet.findViewById<View>(R.id.affirmationSection)
+        val gratitudeSection = sheet.findViewById<View>(R.id.gratitudeSection)
 
-        breathSection.visibility = if (remedy.hasBreathTool) View.VISIBLE else View.GONE
-        affirmationSection.visibility = if (remedy.hasAffirmations) View.VISIBLE else View.GONE
-        gratitudeSection.visibility = if (remedy.hasGratitudeJar) View.VISIBLE else View.GONE
+        breathSection?.visibility = if (remedy.hasBreathTool) View.VISIBLE else View.GONE
+        affirmationSection?.visibility = if (remedy.hasAffirmations) View.VISIBLE else View.GONE
+        gratitudeSection?.visibility = if (remedy.hasGratitudeJar) View.VISIBLE else View.GONE
 
-        configureBreathing(sheet)
-        configureAffirmations(sheet)
-        configureGratitude(sheet)
+        if (remedy.hasBreathTool) configureBreathing(sheet)
+        if (remedy.hasAffirmations) configureAffirmations(sheet)
+        if (remedy.hasGratitudeJar) configureGratitude(sheet)
 
         dialog.setOnDismissListener { stopBreathing() }
         dialog.setContentView(sheet)
@@ -114,10 +114,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureBreathing(sheet: View) {
-        val phaseText = sheet.findViewById<TextView>(R.id.breathPhase)
-        val progress = sheet.findViewById<ProgressBar>(R.id.breathProgress)
-        val start = sheet.findViewById<Button>(R.id.startBreathButton)
-        val stop = sheet.findViewById<Button>(R.id.stopBreathButton)
+        val phaseText = sheet.findViewById<TextView>(R.id.breathPhase) ?: return
+        val progress = sheet.findViewById<ProgressBar>(R.id.breathProgress) ?: return
+        val start = sheet.findViewById<Button>(R.id.startBreathButton) ?: return
+        val stop = sheet.findViewById<Button>(R.id.stopBreathButton) ?: return
 
         val phases = arrayOf("Inhala", "Sostén", "Exhala")
         val duration = intArrayOf(4, 4, 6)
@@ -157,8 +157,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureAffirmations(sheet: View) {
-        val nextAffirmation = sheet.findViewById<Button>(R.id.nextAffirmationButton)
-        val affirmationText = sheet.findViewById<TextView>(R.id.affirmationText)
+        val nextAffirmation = sheet.findViewById<Button>(R.id.nextAffirmationButton) ?: return
+        val affirmationText = sheet.findViewById<TextView>(R.id.affirmationText) ?: return
 
         nextAffirmation.setOnClickListener {
             affirmationText.text = affirmations[Random.nextInt(affirmations.size)]
@@ -166,9 +166,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureGratitude(sheet: View) {
-        val input = sheet.findViewById<EditText>(R.id.gratitudeInput)
-        val add = sheet.findViewById<Button>(R.id.addGratitudeButton)
-        val chips = sheet.findViewById<ChipGroup>(R.id.gratitudeChips)
+        val input = sheet.findViewById<EditText>(R.id.gratitudeInput) ?: return
+        val add = sheet.findViewById<Button>(R.id.addGratitudeButton) ?: return
+        val chips = sheet.findViewById<ChipGroup>(R.id.gratitudeChips) ?: return
 
         add.setOnClickListener {
             val text = input.text?.toString()?.trim().orEmpty()
