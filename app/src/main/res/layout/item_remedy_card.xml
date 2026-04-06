@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="14dp"
+        android:background="@drawable/card_surface">
+
+        <View
+            android:id="@+id/topStripe"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="#E8829A" />
+
+        <TextView
+            android:id="@+id/cardIcon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:background="@drawable/icon_bubble"
+            android:text="💊"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/cardSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="12dp"
+            android:text="Para cuando"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            android:textSize="10sp"
+            android:textColor="#9E8E84" />
+
+        <TextView
+            android:id="@+id/cardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="12dp"
+            android:text="Fue un mal día"
+            android:textStyle="bold"
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/cardBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="12dp"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="5dp"
+            android:background="@drawable/badge_background"
+            android:text="1 dosis"
+            android:textStyle="bold"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
