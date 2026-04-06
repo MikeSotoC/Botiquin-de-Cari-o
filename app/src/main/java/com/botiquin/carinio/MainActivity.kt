@@ -1,12 +1,16 @@
 package com.botiquin.carinio
 
+import android.app.Dialog
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -16,10 +20,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.botiquin.carinio.model.Remedy
 import com.botiquin.carinio.ui.RemedyAdapter
-import android.app.Dialog
-import android.graphics.drawable.ColorDrawable
-import android.view.Window
-import android.view.WindowManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlin.random.Random
@@ -32,17 +32,15 @@ class MainActivity : AppCompatActivity() {
     private var breathPhase = 0
 
     private val affirmations = listOf(
-        "Eres suficiente incluso cuando te sientes cansado o confundido.",
-        "No tienes que resolverlo todo hoy: avanzar un poco ya es avanzar.",
-        "Tu valor no depende de tu productividad ni de un mal momento.",
-        "Pedir ayuda es una forma madura de cuidarte, no una debilidad.",
-        "Respira con calma: ya superaste días difíciles antes y volverás a hacerlo.",
-        "Mereces descanso, cariño y paciencia en tu propio proceso.",
-        "Cada paso pequeño cuenta; ser constante vale más que ser perfecto.",
-        "Tu sensibilidad, tu forma de querer y tu esfuerzo también son fortaleza."
+        "🌟 Eres suficiente tal como eres, incluso en tus días grises.",
+        "💛 No tienes que poder con todo hoy; avanzar un poquito también vale.",
+        "🫶 Tu valor no depende de un error ni de una mala racha.",
+        "🤍 Pedir apoyo es valentía: también mereces que te cuiden.",
+        "🌿 Respira despacio, corazón: este momento difícil también va a pasar.",
+        "✨ Mereces descanso, paz y palabras amables para ti mismo.",
+        "🚶‍♂️ Paso a paso: la constancia suave vence a la perfección.",
+        "🔥 Tu sensibilidad y tu forma de amar son una fuerza, no una debilidad."
     )
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,36 +52,96 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun buildRemedies(): List<Remedy> = listOf(
-        Remedy("😢", "Te sientes triste", "Para cuando", "Abrir aquí",
-            "Está bien no estar bien. No te exijas sonreír de inmediato: respira, hidrátate y date permiso de sentir. Hoy tu tarea principal es cuidarte con suavidad.",
-            Color.parseColor("#7AB0D8"), false, false, false),
-        Remedy("💊", "Fue un mal día", "Para cuando", "1 dosis",
-            "Un mal día no define tu historia. Lo que salió mal hoy puede enseñarte algo para mañana. Descansa, reorganiza y vuelve a intentarlo paso a paso.",
-            Color.parseColor("#E8829A"), false, false, false),
-        Remedy("🫁", "La ansiedad aprieta", "Para cuando", "Respirar",
-            "Cuando notes el pecho apretado o la mente acelerada, usa esta respiración 4-4-6. Ayuda a bajar la activación y a recuperar claridad antes de tomar decisiones.",
-            Color.parseColor("#7AC4A8"), true, false, false),
-        Remedy("🫙", "Olvidaste lo bonito", "Para cuando", "Guardar",
-            "Anota momentos buenos, por pequeños que sean: una conversación, una risa, una canción, algo que sí salió bien. Este frasco te recuerda que no todo fue oscuro.",
-            Color.parseColor("#F0A07A"), false, false, true),
-        Remedy("🤍", "Crees que no vales", "Para cuando", "Leer",
-            "Tu valor no cambia por una caída emocional. Sigues siendo una persona valiosa, con talentos reales y una forma única de querer y construir vínculos.",
-            Color.parseColor("#A890D8"), false, false, false),
-        Remedy("✨", "Necesitas afirmación", "Para cuando", "Tocar",
-            "Si tu diálogo interno se vuelve duro, usa estas afirmaciones como una voz de apoyo. No buscan magia: buscan darte piso emocional y perspectiva.",
-            Color.parseColor("#8C74D7"), false, true, false),
-        Remedy("🌿", "Tu mente se va lejos", "Para cuando", "5-4-3-2-1",
-            "Usa la técnica 5-4-3-2-1 para volver al presente: 5 cosas que ves, 4 que tocas, 3 que escuchas, 2 que hueles y 1 que saboreas. Te ayuda a salir del bucle mental.",
-            Color.parseColor("#56B88B"), false, false, false),
-        Remedy("🙃", "Finges que estás bien", "Para cuando", "Solo tú",
-            "No necesitas fingir fortaleza todo el tiempo. También mereces un espacio seguro para admitir que te duele, pedir contención y descansar de las máscaras.",
-            Color.parseColor("#F0A07A"), false, false, false),
-        Remedy("💌", "Me necesitas a mí", "Para cuando", "Mensaje",
-            "No estás solo, aunque a veces lo parezca. Hay personas que te quieren de verdad y desean verte en paz. Hablar con alguien puede aliviar mucho más de lo que imaginas.",
-            Color.parseColor("#E8829A"), false, false, false),
-        Remedy("⭐", "No puedes dormir", "Para cuando", "Noche",
-            "Si no puedes dormir, no pelees contra la noche. Baja estímulos: luz tenue, respiración suave, menos pantalla y pensamientos más lentos. Tu cuerpo sí sabe volver a calmarse.",
-            Color.parseColor("#7AB0D8"), false, false, false)
+        Remedy(
+            "😢", "Te sientes triste", "Para cuando", "Abrir aquí",
+            """😢 Está bien estar triste. No tienes que apurarte a sentirte mejor.
+
+💧 Toma agua, abrígate y respira profundo.
+
+🫂 Recuerda: a veces no estar bien también es parte de sanar.""",
+            Color.parseColor("#7AB0D8"), false, false, false
+        ),
+        Remedy(
+            "💊", "Fue un mal día", "Para cuando", "1 dosis",
+            """💊 ¿Hoy fue un día pesado? Tranquilo, amor: solo fue un día, no tu destino.
+
+🌅 Mañana puedes volver a empezar con más calma.
+
+💖 Sigue, poquito a poquito. Yo creo en ti.""",
+            Color.parseColor("#E8829A"), false, false, false
+        ),
+        Remedy(
+            "🫁", "La ansiedad aprieta", "Para cuando", "Respirar",
+            """🫁 Cuando la ansiedad apriete, detente un momento.
+
+🌬️ Inhala 4, sostén 4, exhala 6.
+
+🛟 Este ejercicio le recuerda a tu cuerpo que ahora estás a salvo.""",
+            Color.parseColor("#7AC4A8"), true, false, false
+        ),
+        Remedy(
+            "🫙", "Olvidaste lo bonito", "Para cuando", "Guardar",
+            """🫙 Guarda aquí tus momentos bonitos: una risa, una canción, un mensaje lindo.
+
+✨ Cuando te sientas apagado, vuelve a leerlos.
+
+🌈 Te ayudarán a recordar que también pasan cosas hermosas.""",
+            Color.parseColor("#F0A07A"), false, false, true
+        ),
+        Remedy(
+            "🤍", "Crees que no vales", "Para cuando", "Leer",
+            """🤍 Si hoy dudas de ti, respira: tu valor no desaparece.
+
+🏅 Eres valioso por quien eres, no por estar perfecto.
+
+💫 Sigues siendo una persona única, capaz y profundamente querible.""",
+            Color.parseColor("#A890D8"), false, false, false
+        ),
+        Remedy(
+            "✨", "Necesitas afirmación", "Para cuando", "Tocar",
+            """✨ A veces solo necesitas una frase correcta en el momento exacto.
+
+🪞 Toca para recibir una afirmación y hablarte con más amor.
+
+💜 Tu mente también merece ternura.""",
+            Color.parseColor("#8C74D7"), false, true, false
+        ),
+        Remedy(
+            "🌿", "Tu mente se va lejos", "Para cuando", "5-4-3-2-1",
+            """🌿 Si tu mente se va muy lejos, vuelve al presente con 5-4-3-2-1.
+
+👀 5 cosas que ves · ✋ 4 que tocas · 👂 3 que escuchas · 👃 2 que hueles · 👅 1 que saboreas.
+
+🧭 Este anclaje te regresa al aquí y ahora.""",
+            Color.parseColor("#56B88B"), false, false, false
+        ),
+        Remedy(
+            "🙃", "Finges que estás bien", "Para cuando", "Solo tú",
+            """🙃 No tienes que fingir estar bien para ser fuerte.
+
+😭 También tienes derecho a llorar, cansarte y pedir abrazo.
+
+🤝 Tu dolor importa, y tú también importas.""",
+            Color.parseColor("#F0A07A"), false, false, false
+        ),
+        Remedy(
+            "💌", "Me necesitas a mí", "Para cuando", "Mensaje",
+            """💌 Si me necesitas, aquí estoy.
+
+🩷 No estás solo: hay personas que te quieren y te sostienen.
+
+📩 Hablar puede aliviar más de lo que imaginas.""",
+            Color.parseColor("#E8829A"), false, false, false
+        ),
+        Remedy(
+            "⭐", "No puedes dormir", "Para cuando", "Noche",
+            """⭐ Si no puedes dormir, no te castigues.
+
+🌙 Baja la luz, respira suave y deja que la noche te calme.
+
+🛌 Tu cuerpo sabe descansar; solo necesita un poquito de paz.""",
+            Color.parseColor("#7AB0D8"), false, false, false
+        )
     )
 
     private fun showRemedyDialog(remedy: Remedy) {
