@@ -2,7 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fdf6f0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Botiquín">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🩹%3C/text%3E%3C/svg%3E">
 <title>Botiquín de Yeli 🩹</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
@@ -105,6 +110,22 @@ body::after {
   font-size:1.6rem; color:var(--pink); margin-bottom:4px;
 }
 .main-header p { font-size:0.82rem; color:var(--muted); font-weight:400; }
+.greeting { font-size:0.8rem; color:var(--pink); font-weight:600; margin-bottom:6px; }
+.surprise-btn {
+  margin-top:14px; padding:9px 22px;
+  background:var(--white); color:var(--pink);
+  border:1.5px solid var(--pink-light); border-radius:50px;
+  font-family:'Quicksand',sans-serif; font-size:0.85rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.surprise-btn:hover { background:var(--pink-pale); transform:translateY(-2px); }
+.progress-note { margin-top:10px; font-size:0.74rem; color:var(--muted); }
+.footer-note {
+  text-align:center; margin-top:32px;
+  font-family:'Playfair Display',serif; font-style:italic;
+  color:var(--muted); font-size:0.9rem;
+}
+body.modal-open { overflow:hidden; }
 
 /* ---- SHELF / GRID ---- */
 .shelf {
@@ -115,6 +136,8 @@ body::after {
 
 /* ---- REMEDY ITEM ---- */
 .remedy {
+  font:inherit; text-align:left; width:100%;
+  animation: rise 0.45s cubic-bezier(.34,1.3,.64,1) both;
   background:var(--white);
   border:1.5px solid var(--border);
   border-radius:20px;
@@ -124,6 +147,18 @@ body::after {
   position:relative;
   overflow:hidden;
   box-shadow:0 3px 12px var(--shadow);
+}
+@keyframes rise { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.remedy:focus-visible, .modal-close:focus-visible, .open-btn:focus-visible,
+.surprise-btn:focus-visible, button:focus-visible {
+  outline:3px solid var(--pink-light); outline-offset:3px;
+}
+/* little dot for remedies not opened yet */
+.remedy.unseen::after {
+  content:''; position:absolute; top:14px; right:14px;
+  width:9px; height:9px; border-radius:50%;
+  background:var(--item-color, var(--pink));
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--item-color) 20%, transparent);
 }
 .remedy:hover {
   transform:translateY(-4px) scale(1.02);
@@ -279,6 +314,7 @@ body::after {
 .breath-start { background:var(--mint); color:white; box-shadow:0 4px 14px rgba(122,196,168,0.3); }
 .breath-start:hover { background:#5fb896; }
 .breath-stop { background:var(--bg2); color:var(--muted); margin-left:6px; }
+.breath-count { font-size:0.75rem; color:var(--muted); margin-top:8px; min-height:18px; }
 
 /* jar inside modal */
 .jar-inside { margin-top:12px; }
@@ -297,11 +333,18 @@ body::after {
 }
 .jar-save:hover { background:#d0607a; }
 .jar-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.jar-empty { font-size:0.8rem; color:var(--muted); font-style:italic; }
 .jar-tag {
+  display:inline-flex; align-items:center; gap:6px;
   background:var(--pink-pale); border:1px solid var(--pink-light);
-  color:var(--pink); padding:4px 12px; border-radius:50px;
+  color:var(--pink); padding:4px 6px 4px 12px; border-radius:50px;
   font-size:0.78rem; font-weight:600; animation:popIn 0.3s cubic-bezier(.34,1.56,.64,1);
 }
+.jar-del {
+  background:none; border:none; color:var(--pink); cursor:pointer;
+  font-size:0.8rem; line-height:1; width:20px; height:20px; border-radius:50%;
+}
+.jar-del:hover { background:var(--pink-light); color:white; }
 @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
 
 /* affirmation */
@@ -321,6 +364,10 @@ body::after {
   font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.2s;
 }
 .aff-btn:hover { background:#9070c8; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+}
 </style>
 </head>
 <body>
@@ -330,23 +377,28 @@ body::after {
   <div class="intro-bag">🩹</div>
   <h1>Botiquín<br>de Cariño</h1>
   <p>Hecho con mucho amor para ti, Piuchi.<br>Abre lo que necesites cuando lo necesites.</p>
-  <button class="open-btn" onclick="openMain()">Abrir mi botiquín 💊</button>
+  <button class="open-btn" id="open-btn" onclick="openMain()">Abrir mi botiquín 💊</button>
 </div>
 
 <!-- MAIN -->
 <div id="main">
   <div class="main-header">
+    <div class="greeting" id="greeting"></div>
     <h1>Tu botiquín 🩹</h1>
     <p>Toca lo que necesitas hoy</p>
+    <button class="surprise-btn" onclick="openRandom()">🎁 Sorpréndeme</button>
+    <div class="progress-note" id="progress-note"></div>
   </div>
 
   <div class="shelf" id="shelf"></div>
+
+  <p class="footer-note">Vuelve cuando quieras, aquí siempre estaré 🩷</p>
 </div>
 
 <!-- MODAL -->
 <div id="modal-overlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <button class="modal-close" onclick="closeModalBtn()" aria-label="Cerrar">✕</button>
     <div class="modal-icon" id="m-icon"></div>
     <div class="modal-tag" id="m-tag"></div>
     <div class="modal-title" id="m-title"></div>
@@ -402,6 +454,7 @@ const remedies = [
         <div class="breath-track"><div class="breath-fill" id="b-fill"></div></div>
         <button class="breath-start" onclick="startBreath()">Respirar ahora</button>
         <button class="breath-stop" onclick="stopBreath()">Detener</button>
+        <div class="breath-count" id="b-count"></div>
       </div>
     `
   },
@@ -418,6 +471,14 @@ const remedies = [
       <blockquote>mi piuchi tu tienes muchas cosas buenas recuerdas los poemas las frases las dedicatorias q solías escribir cuando nos conocimos todo eso te hace especial y diferente tienes la manera de amar a la antigua esos amores q ya no ahí tu eres especial y único ❤️</blockquote>
       <p>si quieres q te recuerde más cosas buenas me avisas q aún se más cosas bonitas por recordar jajaja</p>
       <p style="text-align:right;font-style:italic;color:#f0a07a;font-size:0.88rem;">— Tu Yeli</p>
+      <div class="jar-inside">
+        <p><em>Tu frasco de cosas bonitas:</em> escribe algo bueno que te pasó, y se queda guardado aquí para cuando lo olvides.</p>
+        <div class="jar-row">
+          <input class="jar-input" id="jar-inp" maxlength="120" placeholder="Hoy me hizo feliz..." onkeydown="if(event.key==='Enter')addJar()">
+          <button class="jar-save" onclick="addJar()">Guardar ✦</button>
+        </div>
+        <div class="jar-tags" id="jar-tags"></div>
+      </div>
     `
   },
   {
@@ -448,6 +509,8 @@ const remedies = [
       <p>El chico cariñoso y amoroso aún está, solo que te volviste frío para no sentir dolor. Ya vendrá alguien que saque ese lado hermoso de ti.</p>
       <p>Tú puedes. Ánimo. Yo creo en ti, mi niño hermoso. ❤️ No te rindas nunca.</p>
       <p style="text-align:right;font-style:italic;color:#a890d8;font-size:0.88rem;">— Tu Yeli</p>
+      <div class="aff-box" id="aff-box"></div>
+      <button class="aff-btn" onclick="showAff()">Dame una afirmación ✨</button>
     `
   },
   {
@@ -513,11 +576,30 @@ const remedies = [
 ];
 
 // ---- Build shelf ----
+// ---- Storage (safe if unavailable) ----
+function load(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+  catch(e) { return fallback; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+const seen = new Set(load('botiquin-seen', []));
+
+function updateProgress() {
+  const n = remedies.filter((_, i) => seen.has(i)).length;
+  document.getElementById('progress-note').textContent =
+    n === remedies.length ? 'Ya abriste todos los remedios 🩷 vuelve a ellos cuando quieras'
+                          : `Has abierto ${n} de ${remedies.length} remedios`;
+}
+
 function buildShelf() {
   const shelf = document.getElementById('shelf');
+  if (shelf.children.length) return;
   remedies.forEach((r, i) => {
-    const div = document.createElement('div');
-    div.className = 'remedy';
+    const div = document.createElement('button');
+    div.type = 'button';
+    div.className = 'remedy' + (seen.has(i) ? '' : ' unseen');
     div.style.setProperty('--item-color', r.color);
     div.style.animationDelay = (i*0.06)+'s';
     div.innerHTML = `
@@ -529,6 +611,14 @@ function buildShelf() {
     div.onclick = () => openRemedy(i, div);
     shelf.appendChild(div);
   });
+  updateProgress();
+}
+
+function openRandom() {
+  const unseen = remedies.map((_, i) => i).filter(i => !seen.has(i));
+  const pool = unseen.length ? unseen : remedies.map((_, i) => i);
+  const i = pool[Math.floor(Math.random()*pool.length)];
+  openRemedy(i, document.querySelectorAll('.remedy')[i]);
 }
 
 function openRemedy(i, el) {
@@ -547,8 +637,18 @@ function openRemedy(i, el) {
   // hide aff box
   const aff = document.getElementById('aff-box');
   if(aff) aff.style.display='none';
+  if (r.isJar) renderJar();
+  seen.add(i);
+  save('botiquin-seen', [...seen]);
+  el.classList.remove('unseen');
+  updateProgress();
+  lastFocus = el;
   document.getElementById('modal-overlay').classList.add('show');
+  document.body.classList.add('modal-open');
+  document.getElementById('modal').scrollTop = 0;
+  document.querySelector('.modal-close').focus();
 }
+let lastFocus = null;
 
 function closeModal(e) {
   if(e.target===document.getElementById('modal-overlay')) closeModalBtn();
@@ -556,7 +656,12 @@ function closeModal(e) {
 function closeModalBtn() {
   stopBreath();
   document.getElementById('modal-overlay').classList.remove('show');
+  document.body.classList.remove('modal-open');
+  if (lastFocus) lastFocus.focus();
 }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('modal-overlay').classList.contains('show')) closeModalBtn();
+});
 
 // ---- BREATHING ----
 let bTimer = null;
@@ -569,6 +674,7 @@ function startBreath() {
   stopBreath();
   runPhase(0, 0);
 }
+function buzz(ms) { try { navigator.vibrate && navigator.vibrate(ms); } catch(e) {} }
 function runPhase(pi, tick) {
   const ring = document.getElementById('b-ring');
   const phase = document.getElementById('b-phase');
@@ -576,7 +682,13 @@ function runPhase(pi, tick) {
   if(!ring) return;
   const p = bPhases[pi%3];
   const total = p.dur*10;
-  if(tick===0) phase.textContent = p.text;
+  if(tick===0) {
+    phase.textContent = p.text;
+    buzz(40);
+    const cycles = Math.floor(pi/3);
+    document.getElementById('b-count').textContent =
+      cycles ? `${cycles} ${cycles===1?'respiración':'respiraciones'} · lo estás haciendo muy bien 🌿` : '';
+  }
   const prog = tick/total;
   fill.style.width = (prog*100)+'%';
   const prevScale = pi%3===0?1.0:bPhases[(pi-1)%3].scale;
@@ -593,21 +705,42 @@ function stopBreath() {
   if(ring){ring.style.transform='scale(1)';}
   if(fill){fill.style.width='0%';}
   if(phase){phase.textContent='Presiona para empezar';}
+  const count=document.getElementById('b-count');
+  if(count){count.textContent='';}
 }
 
 // ---- JAR ----
-const jarItems = [];
+const jarItems = load('botiquin-jar', []);
+function renderJar() {
+  const tags = document.getElementById('jar-tags');
+  if(!tags) return;
+  tags.innerHTML = '';
+  if(!jarItems.length) {
+    tags.innerHTML = '<span class="jar-empty">Tu frasco está vacío... por ahora 🫙</span>';
+    return;
+  }
+  jarItems.forEach((val, i) => {
+    const tag = document.createElement('div');
+    tag.className = 'jar-tag';
+    const txt = document.createElement('span');
+    txt.textContent = '✦ ' + val;
+    const del = document.createElement('button');
+    del.className = 'jar-del';
+    del.textContent = '✕';
+    del.setAttribute('aria-label', 'Quitar');
+    del.onclick = () => { jarItems.splice(i, 1); save('botiquin-jar', jarItems); renderJar(); };
+    tag.append(txt, del);
+    tags.appendChild(tag);
+  });
+}
 function addJar() {
   const inp = document.getElementById('jar-inp');
   const val = inp?.value.trim();
   if(!val) return;
   jarItems.push(val);
+  save('botiquin-jar', jarItems);
   inp.value = '';
-  const tags = document.getElementById('jar-tags');
-  const tag = document.createElement('div');
-  tag.className = 'jar-tag';
-  tag.textContent = '✦ ' + val;
-  tags.appendChild(tag);
+  renderJar();
 }
 
 // ---- AFFIRMATIONS ----
@@ -636,6 +769,15 @@ function showAff() {
   box.style.animation='fadeIn 0.4s ease';
 }
 
+// ---- GREETING ----
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 6)  return 'Es tarde, mi Piuchi... aquí estoy 🌙';
+  if (h < 12) return 'Buenos días, mi Piuchi ☀️';
+  if (h < 19) return 'Buenas tardes, mi Piuchi 🌤️';
+  return 'Buenas noches, mi Piuchi 🌙';
+}
+
 // ---- INTRO ----
 function openMain() {
   document.getElementById('intro').classList.add('out');
@@ -644,6 +786,7 @@ function openMain() {
     const m=document.getElementById('main');
     m.style.display='block';
     setTimeout(()=>m.classList.add('show'),50);
+    document.getElementById('greeting').textContent = greeting();
     buildShelf();
   },700);
 }
